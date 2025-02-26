@@ -4,7 +4,7 @@
     <div class="container">
         <h1 class="title">Speak to AI</h1>
         <p class="subtitle">Hold the button below to talk to the AI. Release it to get an answer.</p>
-        
+
         <div class="button-container">
             <button id="speak" onmousedown="startSpeech()" onmouseup="stopSpeech()" class="speak-button">
                 <span>Hold to Speak</span>
@@ -15,10 +15,6 @@
 
         <audio id="response-audio" controls style="display: none;"></audio>
     </div>
-
-    <footer>
-        <p>&copy; 2025 GE1401 Course Project</p>
-    </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}

@@ -9,8 +9,12 @@ function startSpeech() {
 
     recognition = new window.webkitSpeechRecognition();
     recognition.interimResults = false; // Don't give results while speaking
-    recognition.continuous = true; // Stop after one sentence
+    recognition.continuous = false; // Stop after one sentence
 
+    // Set language to English (en-US)
+    recognition.lang = 'en-US';
+
+    // Event handler for when results are available
     recognition.onresult = function(event) {
         let transcript = Array.from(event.results)
             .map(result => result[0])
@@ -21,6 +25,7 @@ function startSpeech() {
         console.log("Speech Transcription: ", speechToText);
     };
 
+    // Event handler for when recognition has ended
     recognition.onend = function() {
         // Only send the request after recognition has completely ended
         if (speechToText.trim() !== "") { // Ensure the text is not empty
@@ -48,6 +53,12 @@ function startSpeech() {
         }
     };
 
+    // Error handler for failed speech recognition
+    recognition.onerror = function(event) {
+        console.error("Speech Recognition Error: ", event.error);
+        alert("Sorry, there was an error with speech recognition. Please try again.");
+    };
+
     recognition.start();
     isSpeaking = true;
     console.log('Recognition started');
@@ -58,7 +69,6 @@ function stopSpeech() {
         recognition.stop(); // Stop recognition
         isSpeaking = false;
         console.log('Recognition stopped');
-
     }
 }
 
