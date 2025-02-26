@@ -4,11 +4,12 @@ let speechToText = "";
 
 // Initialize speech recognition
 function startSpeech() {
+    speechToText = ""
     if (isSpeaking) return; // Prevent starting a new recognition session if one is already active.
 
     recognition = new window.webkitSpeechRecognition();
-    recognition.interimResults = false;
-    recognition.continuous = false;
+    recognition.interimResults = false; // Don't give results while speaking
+    recognition.continuous = true; // Stop after one sentence
 
     recognition.onresult = function(event) {
         let transcript = Array.from(event.results)
@@ -17,11 +18,13 @@ function startSpeech() {
             .join('');
 
         speechToText = transcript;
+        console.log("Speech Transcription: ", speechToText);
     };
 
     recognition.onend = function() {
-        // Only send the request after the recognition has ended
+        // Only send the request after recognition has completely ended
         if (speechToText.trim() !== "") { // Ensure the text is not empty
+            console.log("Sending Speech to GPT: ", speechToText);
             fetch('/ask_gpt', {
                 method: 'POST',
                 headers: {
@@ -47,12 +50,15 @@ function startSpeech() {
 
     recognition.start();
     isSpeaking = true;
+    console.log('Recognition started');
 }
 
 function stopSpeech() {
     if (isSpeaking) {
-        recognition.stop();
+        recognition.stop(); // Stop recognition
         isSpeaking = false;
+        console.log('Recognition stopped');
+
     }
 }
 
