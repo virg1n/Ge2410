@@ -23,13 +23,19 @@ def index():
 def about_us():
     return render_template('about_us.html')
 
-@app.route('/chat', methods=['POST'])
-def chat():
+@app.route('/ask_gpt', methods=['POST'])
+def ask_gpt():
+    # Debugging log to check the raw request data
+    print("Received request:", request.data)  # Log the raw data
+    print("Received JSON:", request.json)  # Log the parsed JSON
+
     question = request.json.get('question')
     if question:
         answer = get_chatbot_response(question)
         return jsonify({"answer": answer})
     return jsonify({"error": "Missing question parameter"}), 400
+
+
 
 @app.route('/text_to_speech', methods=['POST'])
 def text_to_speech():

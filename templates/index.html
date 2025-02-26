@@ -1,12 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Ask the AI</h1>
-    <form id="chat-form">
-        <textarea id="question" placeholder="Ask me anything..." rows="4" cols="50"></textarea>
-        <button type="submit">Ask</button>
-    </form>
-    <button id="speak">Speak to GPT</button>
+    <h1>Ask the AI by Speaking</h1>
+    <button id="speak" onmousedown="startSpeech()" onmouseup="stopSpeech()">Hold to Speak</button>
     <div id="bot-response"></div>
     <audio id="response-audio" controls style="display: none;"></audio>
 
