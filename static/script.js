@@ -4,7 +4,7 @@ let speechToText = "";
 
 // Initialize speech recognition
 function startSpeech() {
-    speechToText = ""
+    speechToText = "";
     if (isSpeaking) return; // Prevent starting a new recognition session if one is already active.
 
     recognition = new window.webkitSpeechRecognition();
@@ -44,8 +44,12 @@ function startSpeech() {
                 return response.json();
             })
             .then(function(data) {
-                document.getElementById('bot-response').textContent = data.answer;
-                playSpeech(data.answer);
+                if (data.alert) {
+                    alert(data.alert);  // Alert user in case of emergency or call
+                } else {
+                    document.getElementById('bot-response').textContent = data.answer;
+                    playSpeech(data.answer);
+                }
             })
             .catch(function(error) {
                 console.error('Error:', error);

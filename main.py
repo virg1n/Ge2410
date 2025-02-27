@@ -4,6 +4,7 @@ import openai
 from dotenv import load_dotenv
 from gtts import gTTS
 import io
+import re
 
 load_dotenv()  # Load environment variables from .env
 
@@ -12,8 +13,8 @@ app = Flask(__name__)
 # Set the OpenAI API key from environment variable
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# Initialize chat history
-chat_history = [{"role": "system", "content": "You are a helpful assistant."}]
+# Initialize chat history with the updated prompt for elderly assistance
+chat_history = [{"role": "system", "content": "You are a helpful assistant for the elderly from Vviky Company, always kind, clear, and supportive."}]
 
 @app.route('/')
 def index():
@@ -31,10 +32,23 @@ def ask_gpt():
 
     question = request.json.get('question')
     if question:
+        # Check for emergency phrases or call requests before getting chatbot response
+        if "call 911" in question.lower() or "i feel really bad" in question.lower():
+            return jsonify({"alert": "Calling 911..."}), 200
+        match = re.match(r"call to (.*)", question.lower())
+        if match:
+            person = match.group(1)
+            return jsonify({"alert": f"Calling to {person}..."}), 200
+        match = re.match(r"call (.*)", question.lower())
+        if match:
+            person = match.group(1)
+            return jsonify({"alert": f"Calling to {person}..."}), 200
+
+        # Get response from GPT if no emergency detected
         answer = get_chatbot_response(question)
         return jsonify({"answer": answer})
+    
     return jsonify({"error": "Missing question parameter"}), 400
-
 
 
 @app.route('/text_to_speech', methods=['POST'])
