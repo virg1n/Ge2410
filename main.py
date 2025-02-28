@@ -1,35 +1,71 @@
-import os
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file
 import openai
+import os
 from dotenv import load_dotenv
 from gtts import gTTS
 import io
 import re
+import datetime
+from datetime import datetime
 
-load_dotenv()  # Load environment variables from .env
+
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY', 'my_secret_key')  # Use a secure key for sessions
 
-# Set the OpenAI API key from environment variable
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# Initialize chat history with the updated prompt for elderly assistance
-chat_history = [{"role": "system", "content": "You are a helpful assistant for the elderly from Vviky Company, always kind, clear, and supportive."}]
+chat_history = [{"role": "system", "content": "You are a helpful assistant for the elderly from Vviky Company, always kind, clear, and supportive. Keep answers short"}]
 
 @app.route('/')
 def index():
+    if 'user' in session:
+        # Get user data from session
+        user_data = session['user']
+        # Update the prompt with user info (including medications and illness)
+        prompt = f"User details: Name: {user_data['name']}, Age: {user_data['age']}, Illness: {user_data['illness']}, Medications: {user_data['medications']}, Usage: {user_data['med_usage']} times a day. Last usage: {user_data['last_usage']}. Provide assistance accordingly."
+        chat_history[0]['content'] += prompt  # Update system prompt
     return render_template('index.html')
 
 @app.route('/about_us')
 def about_us():
     return render_template('about_us.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Get user data from the form
+        user_data = {
+            'name': request.form['name'],
+            'age': request.form['age'],
+            'illness': request.form['illness'],
+            'medications': request.form['medications'],
+            'med_usage': request.form['med_usage'],
+            'last_usage': request.form['last_usage']
+        }
+
+        # Save user data in session
+        session['user'] = user_data
+        
+        # Redirect to the registered page
+        return redirect(url_for('registered'))
+    
+    return render_template('register.html')
+
+@app.route('/registered')
+def registered():
+    if 'user' in session:
+        user_data = session['user']
+        # Update the prompt with user info (including medications and illness)
+        prompt = f"User details: Name: {user_data['name']}, Age: {user_data['age']}, Illness: {user_data['illness']}, Medications: {user_data['medications']}, Usage: {user_data['med_usage']} times a day. Last usage: {user_data['last_usage']}. Provide assistance accordingly. Current time: {datetime.today()}"
+        chat_history[0]['content'] = prompt  # Update system prompt
+    return render_template('index.html')
+
 @app.route('/ask_gpt', methods=['POST'])
 def ask_gpt():
-    # Debugging log to check the raw request data
     print("Received request:", request.data)  # Log the raw data
     print("Received JSON:", request.json)  # Log the parsed JSON
-
     question = request.json.get('question')
     if question:
         # Check for emergency phrases or call requests before getting chatbot response
@@ -49,7 +85,6 @@ def ask_gpt():
         return jsonify({"answer": answer})
     
     return jsonify({"error": "Missing question parameter"}), 400
-
 
 @app.route('/text_to_speech', methods=['POST'])
 def text_to_speech():

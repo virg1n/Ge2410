@@ -1,32 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registration</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* Additional styles specific to the registration page */
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    form label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    form input {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    form button {
+      background-color: #666;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    form button:hover {
+      background-color: #555;
+    }
+  </style>
 </head>
 <body>
-    <h1>Registration Form</h1>
+  <div class="container">
+    <h1 class="title">Registration</h1>
+    <p class="subtitle">Please fill in your details</p>
     <form action="/register" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
 
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required><br><br>
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" required>
 
-        <label for="illness">Illness (if any):</label>
-        <input type="text" id="illness" name="illness"><br><br>
+      <label for="illness">Illness (if any):</label>
+      <input type="text" id="illness" name="illness">
 
-        <label for="medications">Medications (if any):</label>
-        <input type="text" id="medications" name="medications"><br><br>
+      <label for="medications">Medications (if any):</label>
+      <input type="text" id="medications" name="medications">
 
-        <label for="med_usage">How many times per day:</label>
-        <input type="number" id="med_usage" name="med_usage"><br><br>
+      <label for="med_usage">How many times per day:</label>
+      <input type="number" id="med_usage" name="med_usage">
 
-        <label for="last_usage">Last usage of medications:</label>
-        <input type="datetime-local" id="last_usage" name="last_usage"><br><br>
+      <label for="last_usage">Last usage of medications:</label>
+      <input type="datetime-local" id="last_usage" name="last_usage">
 
-        <button type="submit">Submit</button>
+      <button type="submit">Register</button>
     </form>
+  </div>
+  <footer>
+    <p>Vviky Company &copy; 2025</p>
+  </footer>
 </body>
 </html>
